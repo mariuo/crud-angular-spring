@@ -19,10 +19,25 @@ public class CrudSpringApplication {
 	CommandLineRunner initDatabase(CourseRepository courseRepository) {
 		return args -> {
 			courseRepository.deleteAll();
-			Course c = new Course();
-			c.setName("Angular");
-			c.setCategory("front-end");
-			courseRepository.save(c);
+			Course c1 = new Course();
+			c1.setName("Angular");
+			c1.setCategory("front-end");
+			courseRepository.save(c1);
+
+			Course c2 = new Course();
+			c2.setName("ReactJS");
+			c2.setCategory("front-end");
+			courseRepository.save(c2);
+
+			Course c3 = new Course();
+			c3.setName("Java");
+			c3.setCategory("back-end");
+			courseRepository.save(c3);
+
+			Course c4 = new Course();
+			c4.setName("C#");
+			c4.setCategory("back-end");
+			courseRepository.save(c4);
 		};
 
 	}
