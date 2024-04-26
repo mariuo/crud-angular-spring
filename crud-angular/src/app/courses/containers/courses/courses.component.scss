@@ -1,7 +1,3 @@
-table {
-  width: 100%;
-}
-
 .loading-spinner {
   padding: 25px;
   background-color: rgba(0, 0, 0, 0.15);
@@ -9,4 +5,15 @@ table {
   align-items: center;
   justify-content: center;
 
+}
+
+mat-card {
+  max-width: 80%;
+  margin: 2em auto;
+  text-align: center;
+}
+
+.column-flex {
+  display: flex;
+  flex-direction: column;
 }
