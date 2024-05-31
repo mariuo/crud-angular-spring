@@ -1,6 +1,6 @@
 package com.camel.crudspring.controller;
 
-import com.camel.crudspring.model.Course;
+import com.camel.crudspring.dto.CourseDTO;
 import com.camel.crudspring.services.CourseService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -23,24 +23,24 @@ public class CourseController {
     }
 
     @GetMapping
-    public @ResponseBody List<Course> listCourses() {
+    public @ResponseBody List<CourseDTO> listCourses() {
         return courseService.listCourses();
     }
 
     @GetMapping("/{id}")
-    public Course findById(@PathVariable @NotNull @Positive Long id){
+    public CourseDTO findById(@PathVariable @NotNull @Positive Long id){
         return courseService.findById(id);
     }
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public Course createCourses(@RequestBody @Valid Course course){
-        return courseService.createCourses(course);
+    public CourseDTO createCourses(@RequestBody @Valid CourseDTO dto){
+        return courseService.createCourses(dto);
     }
 
     @PutMapping("/{id}")
-    public Course update(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid Course course){
-        return courseService.update(id, course);
+    public CourseDTO update(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid CourseDTO dto){
+        return courseService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
