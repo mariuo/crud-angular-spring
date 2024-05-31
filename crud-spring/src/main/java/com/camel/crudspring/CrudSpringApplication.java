@@ -24,11 +24,19 @@ public class CrudSpringApplication {
 			Course c1 = new Course();
 			c1.setName("Angular");
 			c1.setCategory(Category.FRONT_END);
+
 			Lesson l1 = new Lesson();
 			l1.setName("Intro");
 			l1.setUrlYoutube("/1");
 			l1.setCourse(c1);
+
+			Lesson l11 = new Lesson();
+			l11.setName("Profile");
+			l11.setUrlYoutube("/11");
+			l11.setCourse(c1);
+
 			c1.getLessons().add(l1);
+			c1.getLessons().add(l11);
 			courseRepository.save(c1);
 
 			Course c2 = new Course();
