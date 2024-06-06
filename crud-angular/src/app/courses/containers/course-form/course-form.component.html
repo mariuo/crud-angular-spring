@@ -9,6 +9,7 @@
         <mat-hint align="end">{{name.value.length || 0}}/100</mat-hint>
         <mat-error *ngIf="form.get('name')?.invalid">{{getErrorMessage("name")}}</mat-error>
       </mat-form-field>
+
       <mat-form-field class="full-width">
         <mat-label>Category</mat-label>
         <mat-select formControlName="category">
@@ -18,6 +19,41 @@
         </mat-select>
         <mat-error *ngIf="form.get('category')?.invalid">{{getErrorMessage("category")}}</mat-error>
       </mat-form-field>
+
+      <mat-toolbar>
+        <span>Lessons</span>
+        <button mat-icon-button color="primary" (click)="addNewLesson()">
+          <mat-icon aria-label="New lesson">add</mat-icon>
+        </button>
+      </mat-toolbar>
+
+
+      <mat-error *ngIf="isFormArrayRequired()" class="form-array-error">At least add one lesson.</mat-error>
+
+      <table style="width: 100%;" formArrayName="lessons" *ngFor="let lesson of getLessonsFormArray(); let i = index">
+        <tr [formGroupName]="i">
+          <td style="width: 50%;">
+            <mat-form-field class="full-width">
+              <mat-label>Title lesson</mat-label>
+              <input matInput formControlName="name" #name required>
+              <mat-error *ngIf="getLessonsFormArray()[i].get('name')?.invalid">Invalid field</mat-error>
+            </mat-form-field>
+          </td>
+          <td style="width: 50%;">
+            <mat-form-field class="full-width">
+              <mat-label>URL lesson</mat-label>
+              <span matPrefix>https://youtu.be/</span>
+              <input matInput formControlName="urlYoutube" #urlYoutube required>
+              <mat-error *ngIf="getLessonsFormArray()[i].get('urlYoutube')?.invalid">Invalid field</mat-error>
+            </mat-form-field>
+          </td>
+          <td>
+            <button mat-icon-button color="warn" (click)="removeLesson(i)">
+              <mat-icon aria-label="Remove lesson">delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
     </form>
   </mat-card-content>
   <mat-card-actions class="actions-center">

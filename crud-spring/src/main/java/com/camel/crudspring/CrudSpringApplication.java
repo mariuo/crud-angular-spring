@@ -27,12 +27,12 @@ public class CrudSpringApplication {
 
 			Lesson l1 = new Lesson();
 			l1.setName("Intro");
-			l1.setUrlYoutube("/1");
+			l1.setUrlYoutube("watch?v=1");
 			l1.setCourse(c1);
 
 			Lesson l11 = new Lesson();
 			l11.setName("Profile");
-			l11.setUrlYoutube("/11");
+			l11.setUrlYoutube("watch?v=11");
 			l11.setCourse(c1);
 
 			c1.getLessons().add(l1);
@@ -44,7 +44,7 @@ public class CrudSpringApplication {
 			c2.setCategory(Category.FRONT_END);
 			Lesson l2 = new Lesson();
 			l2.setName("Intro");
-			l2.setUrlYoutube("/2");
+			l2.setUrlYoutube("watch?v=2");
 			l2.setCourse(c2);
 			c2.getLessons().add(l2);
 			courseRepository.save(c2);
@@ -54,7 +54,7 @@ public class CrudSpringApplication {
 			c3.setCategory(Category.BACK_END);
 			Lesson l3 = new Lesson();
 			l3.setName("Intro");
-			l3.setUrlYoutube("/3");
+			l3.setUrlYoutube("watch?v=3");
 			l3.setCourse(c3);
 			c3.getLessons().add(l3);
 			courseRepository.save(c3);
@@ -64,7 +64,7 @@ public class CrudSpringApplication {
 			c4.setCategory(Category.BACK_END);
 			Lesson l4 = new Lesson();
 			l4.setName("Intro");
-			l4.setUrlYoutube("/4");
+			l4.setUrlYoutube("watch?v=4");
 			l4.setCourse(c4);
 			c4.getLessons().add(l4);
 			courseRepository.save(c4);
