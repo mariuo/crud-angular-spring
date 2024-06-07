@@ -4,6 +4,7 @@ import com.camel.crudspring.dto.CourseDTO;
 import com.camel.crudspring.dto.mapper.CourseMapper;
 import com.camel.crudspring.enums.Category;
 import com.camel.crudspring.exception.RecordNotFoundException;
+import com.camel.crudspring.model.Course;
 import com.camel.crudspring.repositories.CourseRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -43,8 +44,12 @@ public class CourseService {
     public CourseDTO update(@NotNull @Positive Long id, @RequestBody @Valid @NotNull CourseDTO dto){
         return courseRepository.findById(id)
                 .map(recordFound -> {
+                    Course course = courseMapper.toEntity(dto);
                     recordFound.setName(dto.name());
                     recordFound.setCategory(courseMapper.convertCategoryValue(dto.category()));
+                    recordFound.getLessons().clear();
+                    course.getLessons().forEach(recordFound.getLessons()::add);
+
                     return courseMapper.toDTO(courseRepository.save(recordFound));
                 }).orElseThrow(()-> new RecordNotFoundException(id));
     }

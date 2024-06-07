@@ -5,6 +5,7 @@ import com.camel.crudspring.dto.LessonDTO;
 import com.camel.crudspring.enums.Category;
 import com.camel.crudspring.enums.Status;
 import com.camel.crudspring.model.Course;
+import com.camel.crudspring.model.Lesson;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -33,6 +34,17 @@ public class CourseMapper {
         entity.setName(dto.name());
         entity.setCategory(convertCategoryValue(dto.category()));
         entity.setStatus(Status.ACTIVE);
+
+        List<Lesson> lessons = dto.lessons().stream().map(lessonDTO -> {
+            var lesson = new Lesson();
+            lesson.setId(lessonDTO.id());
+            lesson.setName(lessonDTO.name());
+            lesson.setUrlYoutube(lessonDTO.urlYoutube());
+            lesson.setCourse(entity);
+            return lesson;
+        }).collect(Collectors.toList());
+
+        entity.setLessons(lessons);
         return entity;
     }
     public Category convertCategoryValue(String value){
