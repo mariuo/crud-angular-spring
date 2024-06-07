@@ -2,7 +2,6 @@ package com.camel.crudspring.services;
 
 import com.camel.crudspring.dto.CourseDTO;
 import com.camel.crudspring.dto.mapper.CourseMapper;
-import com.camel.crudspring.enums.Category;
 import com.camel.crudspring.exception.RecordNotFoundException;
 import com.camel.crudspring.model.Course;
 import com.camel.crudspring.repositories.CourseRepository;
@@ -11,7 +10,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
