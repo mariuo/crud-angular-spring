@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.camel.crudspring.model.Course;
 import com.camel.crudspring.repositories.CourseRepository;
+import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
 public class CrudSpringApplication {
@@ -18,6 +19,7 @@ public class CrudSpringApplication {
 	}
 
 	@Bean
+	@Profile("dev")
 	CommandLineRunner initDatabase(CourseRepository courseRepository) {
 		return args -> {
 			courseRepository.deleteAll();
