@@ -1,10 +1,13 @@
 package com.camel.crudspring.controller;
 
 import com.camel.crudspring.dto.CourseDTO;
+import com.camel.crudspring.dto.CoursePageDTO;
 import com.camel.crudspring.services.CourseService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +25,18 @@ public class CourseController {
         this.courseService = courseService;
     }
 
+    /*
     @GetMapping
     public @ResponseBody List<CourseDTO> listCourses() {
         return courseService.listCourses();
     }
+     */
+    @GetMapping
+    public @ResponseBody CoursePageDTO listCourses(@RequestParam(defaultValue = "0") @PositiveOrZero int pageNumber,
+                                                   @RequestParam(defaultValue = "10") @Positive @Max(100) int pageSize) {
+        return courseService.listCourses(pageNumber, pageSize);
+    }
+
 
     @GetMapping("/{id}")
     public CourseDTO findById(@PathVariable @NotNull @Positive Long id){

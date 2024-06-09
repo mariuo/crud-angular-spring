@@ -1,13 +1,18 @@
 package com.camel.crudspring.services;
 
 import com.camel.crudspring.dto.CourseDTO;
+import com.camel.crudspring.dto.CoursePageDTO;
 import com.camel.crudspring.dto.mapper.CourseMapper;
 import com.camel.crudspring.exception.RecordNotFoundException;
 import com.camel.crudspring.model.Course;
 import com.camel.crudspring.repositories.CourseRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,8 +32,15 @@ public class CourseService {
         this.courseMapper = courseMapper;
     }
 
+    /*
     public List<CourseDTO> listCourses() {
         return courseRepository.findAll().stream().map(courseMapper::toDTO).collect(Collectors.toList());
+    }
+     */
+    public CoursePageDTO listCourses(@PositiveOrZero int pageNumber, @Positive @Max(100) int pageSize){
+        Page<Course> page = courseRepository.findAll(PageRequest.of(pageNumber,pageSize));
+        List<CourseDTO> courses = page.get().map(courseMapper::toDTO).collect(Collectors.toList());
+        return new CoursePageDTO(courses, page.getTotalElements(), page.getTotalPages());
     }
 
     public CourseDTO findById(@NotNull @Positive Long id){

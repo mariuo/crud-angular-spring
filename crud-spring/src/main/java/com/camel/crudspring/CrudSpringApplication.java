@@ -21,17 +21,19 @@ public class CrudSpringApplication {
 	CommandLineRunner initDatabase(CourseRepository courseRepository) {
 		return args -> {
 			courseRepository.deleteAll();
+			for(int i = 0 ; i <20; i++){
+
 			Course c1 = new Course();
-			c1.setName("Angular");
+			c1.setName("Angular" + i);
 			c1.setCategory(Category.FRONT_END);
 
 			Lesson l1 = new Lesson();
-			l1.setName("Intro");
+			l1.setName("Intro" + i);
 			l1.setUrlYoutube("watch?v=123");
 			l1.setCourse(c1);
 
 			Lesson l11 = new Lesson();
-			l11.setName("Profile");
+			l11.setName("Profile" + i);
 			l11.setUrlYoutube("watch?v=321");
 			l11.setCourse(c1);
 
@@ -40,17 +42,17 @@ public class CrudSpringApplication {
 			courseRepository.save(c1);
 
 			Course c2 = new Course();
-			c2.setName("ReactJS");
+			c2.setName("ReactJS" + i);
 			c2.setCategory(Category.FRONT_END);
 			Lesson l2 = new Lesson();
-			l2.setName("Intro");
+			l2.setName("Intro" + i);
 			l2.setUrlYoutube("watch?v=234");
 			l2.setCourse(c2);
 			c2.getLessons().add(l2);
 			courseRepository.save(c2);
 
 			Course c3 = new Course();
-			c3.setName("Javaa");
+			c3.setName("Javaa" + i);
 			c3.setCategory(Category.BACK_END);
 			Lesson l3 = new Lesson();
 			l3.setName("Intro");
@@ -60,14 +62,15 @@ public class CrudSpringApplication {
 			courseRepository.save(c3);
 
 			Course c4 = new Course();
-			c4.setName("Microsoft C#");
+			c4.setName("Microsoft C#"  + i);
 			c4.setCategory(Category.BACK_END);
 			Lesson l4 = new Lesson();
-			l4.setName("Intro");
+			l4.setName("Intro"  + i);
 			l4.setUrlYoutube("watch?v=456");
 			l4.setCourse(c4);
 			c4.getLessons().add(l4);
 			courseRepository.save(c4);
+			}
 		};
 
 	}
