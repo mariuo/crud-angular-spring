@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { ErrorDialogComponent } from 'src/app/shared/components/error-dialog/error-dialog.component';
 
 import { Course } from '../../models/course';
 import { CoursesService } from '../../services/courses.service';
 import { ConfirmationDialogComponent } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { CoursePage } from '../../models/course-page';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-courses',
@@ -17,8 +19,12 @@ import { ConfirmationDialogComponent } from 'src/app/shared/components/confirmat
 })
 export class CoursesComponent implements OnInit {
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  courses$: Observable<Course[]> | null = null;
+  pageIndex = 0;
+  pageSize = 10;
+
+  courses$: Observable<CoursePage> | null = null;
 
 
   // displayedColumns = ['_id', 'name', 'category'];
@@ -38,13 +44,17 @@ export class CoursesComponent implements OnInit {
     this.refresh();
   }
 
-  refresh() {
-    this.courses$ = this.courseService.list()
+  refresh(pageEvent: PageEvent = { length: 0, pageIndex: 0, pageSize: 10 }) {
+    this.courses$ = this.courseService.list(pageEvent.pageIndex, pageEvent.pageSize)
       .pipe(
+        tap(() => {
+          this.pageIndex = pageEvent.pageIndex;
+          this.pageSize = pageEvent.pageSize;
+        }),
         catchError(error => {
           this.onError('Error when loading courses.');
           //console.log('Error to load courses.')
-          return of([])
+          return of({ courses: [], totalElements: 0, totalPages: 0 })
         })
       );
   }
