@@ -1,39 +1,45 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+import { CategoryPipe } from '../../../shared/pipes/category.pipe';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
 import { Course } from '../../models/course';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-courses-list',
   templateUrl: './courses-list.component.html',
-  styleUrls: ['./courses-list.component.scss']
+  styleUrls: ['./courses-list.component.scss'],
+  standalone: true,
+  imports: [MatTableModule, MatIconModule, MatButtonModule, CategoryPipe]
 })
-export class CoursesListComponent implements OnInit {
-
+export class CoursesListComponent {
   @Input() courses: Course[] = [];
-  @Output() add = new EventEmitter(false);
-  @Output() edit = new EventEmitter(false);
-  @Output() delete = new EventEmitter(false);
+  @Output() details: EventEmitter<Course> = new EventEmitter(false);
+  @Output() edit: EventEmitter<Course> = new EventEmitter(false);
+  @Output() remove: EventEmitter<Course> = new EventEmitter(false);
+  @Output() add: EventEmitter<boolean> = new EventEmitter(false);
+  @Output() view: EventEmitter<Course> = new EventEmitter(false);
+
   readonly displayedColumns = ['name', 'category', 'actions'];
 
-
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute
-  ) { }
-
-  ngOnInit(): void {
+  onDetails(record: Course) {
+    this.details.emit(record);
   }
 
   onAdd() {
-    // console.log('onAdd');
-    // relativeTo this eleminate /courses/
-    // this.router.navigate(['new'], { relativeTo: this.route });
     this.add.emit(true);
   }
-  onEdit(course: Course) {
-    this.edit.emit(course);
+
+  onEdit(record: Course) {
+    this.edit.emit(record);
   }
-  onDelete(course: Course) {
-    this.delete.emit(course)
+
+  onRemove(record: Course) {
+    this.remove.emit(record);
+  }
+
+  onView(record: Course) {
+    this.view.emit(record);
   }
 }
