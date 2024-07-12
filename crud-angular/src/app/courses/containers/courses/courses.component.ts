@@ -1,67 +1,69 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import { ErrorDialogComponent } from 'src/app/shared/components/error-dialog/error-dialog.component';
+import { catchError, Observable, of, tap } from 'rxjs';
 
-import { Course } from '../../models/course';
-import { CoursesService } from '../../services/courses.service';
-import { ConfirmationDialogComponent } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { CoursePage } from '../../models/course-page';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
 import { CoursesListComponent } from '../../components/courses-list/courses-list.component';
-import { NgIf, AsyncPipe } from '@angular/common';
-import { MatToolbar } from '@angular/material/toolbar';
-import { MatCard } from '@angular/material/card';
+import { CoursePage } from '../../models/course-page';
+import { CoursesService } from '../../services/courses.service';
+import { Course } from '../../models/course';
 
 @Component({
-    selector: 'app-courses',
-    templateUrl: './courses.component.html',
-    styleUrls: ['./courses.component.scss'],
-    standalone: true,
-    imports: [MatCard, MatToolbar, NgIf, CoursesListComponent, MatPaginator, MatProgressSpinner, AsyncPipe]
+  selector: 'app-courses',
+  templateUrl: './courses.component.html',
+  styleUrls: ['./courses.component.scss'],
+  standalone: true,
+  imports: [
+    MatCardModule,
+    MatToolbarModule,
+    NgIf,
+    CoursesListComponent,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatPaginatorModule,
+    AsyncPipe
+  ]
 })
 export class CoursesComponent implements OnInit {
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  courses$: Observable<CoursePage> | null = null;
 
   pageIndex = 0;
   pageSize = 10;
 
-  courses$: Observable<CoursePage> | null = null;
-
-
-  // displayedColumns = ['_id', 'name', 'category'];
-
-  //courseService: CoursesService;
-
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
-    private courseService: CoursesService,
+    private coursesService: CoursesService,
     public dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
-  ) {
-    // this.courses = [];
-    // this.courseService = new CoursesService();
+  ) { }
+
+  ngOnInit() {
     this.refresh();
   }
 
   refresh(pageEvent: PageEvent = { length: 0, pageIndex: 0, pageSize: 10 }) {
-    this.courses$ = this.courseService.list(pageEvent.pageIndex, pageEvent.pageSize)
+    this.courses$ = this.coursesService
+      .list(pageEvent.pageIndex, pageEvent.pageSize)
       .pipe(
         tap(() => {
           this.pageIndex = pageEvent.pageIndex;
           this.pageSize = pageEvent.pageSize;
         }),
-        catchError(error => {
-          this.onError('Error when loading courses.');
-          //console.log('Error to load courses.')
-          return of({ courses: [], totalElements: 0, totalPages: 0 })
+        catchError(() => {
+          this.onError('Error loading courses.');
+          return of({ courses: [], totalElements: 0 } as CoursePage);
         })
       );
   }
@@ -72,40 +74,37 @@ export class CoursesComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-  }
-
   onAdd() {
-    // console.log('onAdd');
-    // relativeTo this eleminate /courses/
     this.router.navigate(['new'], { relativeTo: this.route });
   }
+
   onEdit(course: Course) {
     this.router.navigate(['edit', course._id], { relativeTo: this.route });
   }
-  onDelete(course: Course) {
 
+  onView(course: Course) {
+    this.router.navigate(['view', course._id], { relativeTo: this.route });
+  }
+
+  onRemove(course: Course) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure?',
+      data: 'Are you sure you would like to remove this course?'
     });
 
     dialogRef.afterClosed().subscribe((result: boolean) => {
       if (result) {
-        this.courseService.delete(course._id).subscribe(
-          () => {
-
-            this.snackBar.open('Deleted successfully', 'X',
-              { duration: 3000, verticalPosition: 'top', horizontalPosition: 'center' });
+        this.coursesService.delete(course._id).subscribe({
+          next: () => {
             this.refresh();
-
+            this.snackBar.open('Course removed successfully!', 'X', {
+              duration: 5000,
+              verticalPosition: 'top',
+              horizontalPosition: 'center'
+            });
           },
-          () => this.onError('Error when try to delete.')
-        );
+          error: () => this.onError('Error trying to remove the course.')
+        });
       }
     });
-
   }
-
-
-
 }

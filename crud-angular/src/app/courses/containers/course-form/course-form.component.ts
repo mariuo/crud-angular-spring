@@ -1,43 +1,64 @@
-import { Location, NgIf, NgFor } from '@angular/common';
+import { Location, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder, UntypedFormArray, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  UntypedFormArray,
+  Validators
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute } from '@angular/router';
-
 import { CoursesService } from '../../services/courses.service';
+import { FormUtilsService } from 'src/app/shared/services/form-utils.service';
 import { Course } from '../../models/course';
 import { Lesson } from '../../models/lesson';
-import { FormUtilsService } from 'src/app/shared/form/form-utils.service';
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton, MatButton } from '@angular/material/button';
-import { MatOption } from '@angular/material/core';
-import { MatSelect } from '@angular/material/select';
-import { MatInput } from '@angular/material/input';
-import { MatFormField, MatHint, MatError, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatToolbar } from '@angular/material/toolbar';
-import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
+
+
 
 @Component({
-    selector: 'app-course-form',
-    templateUrl: './course-form.component.html',
-    styleUrls: ['./course-form.component.scss'],
-    standalone: true,
-    imports: [MatCard, MatToolbar, MatCardContent, ReactiveFormsModule, MatFormField, MatInput, MatHint, NgIf, MatError, MatLabel, MatSelect, MatOption, MatIconButton, MatIcon, NgFor, MatPrefix, MatCardActions, MatButton]
+  selector: 'app-course-form',
+  templateUrl: './course-form.component.html',
+  styleUrls: ['./course-form.component.scss'],
+  standalone: true,
+  imports: [
+    MatCardModule,
+    MatToolbarModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    NgIf,
+    MatSelectModule,
+    MatOptionModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    NgFor
+  ]
 })
 export class CourseFormComponent implements OnInit {
-
   form!: FormGroup;
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
     private service: CoursesService,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private location: Location,
     private route: ActivatedRoute,
     public formUtils: FormUtilsService
-  ) {
+  ) { }
 
-  }
 
   ngOnInit(): void {
     const course: Course = this.route.snapshot.data['course'];
@@ -59,15 +80,28 @@ export class CourseFormComponent implements OnInit {
     }
     return lessons;
   }
-  private createLesson(lesson: Lesson = { id: '', name: '', urlYoutube: '' }) {
+  private createLesson(lesson: Lesson = { _id: '', name: '', urlYoutube: '' }) {
     return this.formBuilder.group({
-      id: [lesson.id],
+      _id: [lesson._id],
       name: [lesson.name, [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
       urlYoutube: [lesson.urlYoutube, [Validators.required, Validators.minLength(10), Validators.maxLength(11)]]
     })
   }
-  getLessonsFormArray() {
+  getLessonFormArray() {
     return (<UntypedFormArray>this.form.get('lessons')).controls;
+  }
+
+  getErrorMessage(fieldName: string): string {
+    return this.formUtils.getFieldErrorMessage(this.form, fieldName);
+  }
+
+  getLessonErrorMessage(fieldName: string, index: number) {
+    return this.formUtils.getFieldFormArrayErrorMessage(
+      this.form,
+      'lessons',
+      fieldName,
+      index
+    );
   }
   addNewLesson() {
     const lessons = this.form.get('lessons') as UntypedFormArray;
@@ -81,8 +115,10 @@ export class CourseFormComponent implements OnInit {
 
   onSubmit() {
     if (this.form.valid) {
-      this.service.save(this.form.value).subscribe(result => this.onSuccess(), error => this.onError());
-
+      this.service.save(this.form.value as Course).subscribe({
+        next: () => this.onSuccess(),
+        error: () => this.onError()
+      });
     } else {
       this.formUtils.validateAllFormFields(this.form);
     }

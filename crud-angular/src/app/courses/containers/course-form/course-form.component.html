@@ -7,7 +7,9 @@
       <mat-form-field class="full-width">
         <input matInput placeholder="Name" formControlName="name" #name required>
         <mat-hint align="end">{{name.value.length || 0}}/100</mat-hint>
-        <mat-error *ngIf="form.get('name')?.invalid">{{formUtils.getErrorMessage(form, 'name')}}</mat-error>
+        <mat-error *ngIf="form.get('name')?.invalid">
+          {{ getErrorMessage('name') }}
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="full-width">
@@ -16,7 +18,9 @@
           <mat-option value="Front-end">Front-end</mat-option>
           <mat-option value="Back-end">Back-end</mat-option>
         </mat-select>
-        <mat-error *ngIf="form.get('category')?.invalid">{{formUtils.getErrorMessage(form, 'category')}}</mat-error>
+        <mat-error mat-error *ngIf="form.get('category')?.invalid">{{
+          getErrorMessage('category')
+          }}</mat-error>
       </mat-form-field>
 
       <mat-toolbar>
@@ -29,14 +33,16 @@
       <mat-error *ngIf="formUtils.isFormArrayRequired(form, 'lessons')" class="form-array-error">At least one
         lesson.</mat-error>
 
-      <table style="width: 100%;" formArrayName="lessons" *ngFor="let lesson of getLessonsFormArray(); let i = index">
+
+      <table class="full-width" formArrayName="lessons" *ngFor="let lesson of getLessonFormArray(); let i = index">
         <tr [formGroupName]="i">
           <td style="width: 65%;">
             <mat-form-field class="full-width">
               <mat-label>Title lesson</mat-label>
               <input matInput formControlName="name" #name required>
-              <mat-error *ngIf="getLessonsFormArray()[i].get('name')?.invalid">{{
-                formUtils.getFormArrayFieldErrorMessage(form, 'lessons', 'name', i) }}</mat-error>
+              <mat-error *ngIf="getLessonFormArray()[i].get('name')?.invalid">
+                {{ getLessonErrorMessage('name', i) }}
+              </mat-error>
             </mat-form-field>
           </td>
           <td style="width: 30%;">
@@ -44,8 +50,9 @@
               <mat-label>URL lesson</mat-label>
               <span matPrefix>https://youtu.be/</span>
               <input matInput formControlName="urlYoutube" #urlYoutube required>
-              <mat-error *ngIf="getLessonsFormArray()[i].get('urlYoutube')?.invalid">{{
-                formUtils.getFormArrayFieldErrorMessage(form, 'lessons', 'urlYoutube', i) }}</mat-error>
+              <mat-error *ngIf="getLessonFormArray()[i].get('urlYoutube')?.invalid">
+                {{ getLessonErrorMessage('urlYoutube', i) }}
+              </mat-error>
             </mat-form-field>
           </td>
           <td>
